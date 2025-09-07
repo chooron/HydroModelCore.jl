@@ -1,3 +1,10 @@
+using DocStringExtensions
+
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractHydroFlux`.
+"""
 function Base.show(io::IO, flux::AbstractHydroFlux)
     compact = get(io, :compact, false)
 
@@ -10,7 +17,7 @@ function Base.show(io::IO, flux::AbstractHydroFlux)
     else
         printstyled(io, "┌ ", color=:light_blue, bold=true)
         printstyled(io, "HydroFlux", color=:light_blue, bold=true)
-        printstyled(io, "{$(get_name(flux))}", color=:light_black)
+        printstyled(io, "{$(flux.name)}", color=:light_black)
         println(io)
         
         # Print inputs with a different color
@@ -43,6 +50,11 @@ function Base.show(io::IO, flux::AbstractHydroFlux)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractStateFlux`.
+"""
 function Base.show(io::IO, flux::AbstractStateFlux)
     compact = get(io, :compact, false)
 
@@ -55,7 +67,7 @@ function Base.show(io::IO, flux::AbstractStateFlux)
     else
         printstyled(io, "┌ ", color=:light_blue, bold=true)
         printstyled(io, "StateFlux", color=:light_blue, bold=true)
-        printstyled(io, "{$(get_name(flux))}", color=:light_black)
+        printstyled(io, "{$(flux.name)}", color=:light_black)
         println(io)
         
         # Print inputs with a different color
@@ -88,6 +100,11 @@ function Base.show(io::IO, flux::AbstractStateFlux)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractNeuralFlux`.
+"""
 function Base.show(io::IO, flux::AbstractNeuralFlux)
     compact = get(io, :compact, false)
 
@@ -100,7 +117,7 @@ function Base.show(io::IO, flux::AbstractNeuralFlux)
     else
         printstyled(io, "┌ ", color=:light_blue, bold=true)
         printstyled(io, "NeuralFlux", color=:light_blue, bold=true)
-        printstyled(io, "{$(get_name(flux))}", color=:light_black)
+        printstyled(io, "{$(flux.name)}", color=:light_black)
         println(io)
         
         # Print inputs with a different color
@@ -130,6 +147,11 @@ function Base.show(io::IO, flux::AbstractNeuralFlux)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractHydrograph`.
+"""
 function Base.show(io::IO, uh::AbstractHydrograph)
     compact = get(io, :compact, false)
     if compact
@@ -174,6 +196,11 @@ function Base.show(io::IO, uh::AbstractHydrograph)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractBucket`.
+"""
 function Base.show(io::IO, ele::AbstractBucket)
     compact = get(io, :compact, false)
     if compact
@@ -187,65 +214,36 @@ function Base.show(io::IO, ele::AbstractBucket)
     else
         printstyled(io, "┌ ", color=:light_blue, bold=true)
         printstyled(io, "HydroBucket", color=:light_blue, bold=true)
-        printstyled(io, "{$(get_name(ele))}", color=:light_black)
+        printstyled(io, "{$(ele.name)}", color=:light_black)
         println(io)
         
-        # Print inputs with a different color
         print(io, "│ ")
         printstyled(io, "Inputs:  ", color=:light_green)
         println(io, "[", join(get_input_names(ele), ", "), "]")
         
-        # Print states with a different color
         print(io, "│ ")
         printstyled(io, "States:  ", color=:blue)
         println(io, "[", join(get_state_names(ele), ", "), "]")
         
-        # Print outputs with a different color
         print(io, "│ ")
         printstyled(io, "Outputs: ", color=:light_yellow)
         println(io, "[", join(get_output_names(ele), ", "), "]")
         
-        # Print parameters with a different color
         print(io, "│ ")
         printstyled(io, "Params:  ", color=:light_magenta)
         println(io, "[", join(get_param_names(ele), ", "), "]")
         
-        # Print neural networks with a different color
-        print(io, "│ ")
+        print(io, "└─")
         printstyled(io, "NNs:     ", color=:light_cyan)
         println(io, "[", join(get_nn_names(ele), ", "), "]")
-
-        # Print fluxes expressions
-        println(io, "│")
-        print(io, "│ ")
-        printstyled(io, "Fluxes:", color=:yellow)
-        println(io)
-        for flux in ele.fluxes
-            for (output, ex) in zip(get_outputs(flux), get_exprs(flux))
-                print(io, "│   ")
-                println(io, output ~ ex)
-            end
-        end
-
-        # Print dfluxes expressions if any
-        if !isempty(ele.dfluxes)
-            println(io, "│")
-            print(io, "│ ")
-            printstyled(io, "State Fluxes:", color=:yellow)
-            println(io)
-            for dflux in ele.dfluxes
-                for (st, ex) in zip(get_states(dflux), get_exprs(dflux))
-                    print(io, "│   ")
-                    println(io, st ~ ex)
-                end
-            end
-        end
-        
-        printstyled(io, "└─", color=:light_blue)
-        println(io)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractHydroRoute`.
+"""
 function Base.show(io::IO, route::AbstractHydroRoute)
     compact = get(io, :compact, false)
     if compact
@@ -259,62 +257,36 @@ function Base.show(io::IO, route::AbstractHydroRoute)
     else
         printstyled(io, "┌ ", color=:light_blue, bold=true)
         printstyled(io, "HydroBucket", color=:light_blue, bold=true)
-        printstyled(io, "{$(get_name(route))}", color=:light_black)
+        printstyled(io, "{$(route.name)}", color=:light_black)
         println(io)
         
-        # Print inputs with a different color
         print(io, "│ ")
         printstyled(io, "Inputs:  ", color=:light_green)
         println(io, "[", join(get_input_names(route), ", "), "]")
         
-        # Print states with a different color
         print(io, "│ ")
         printstyled(io, "States:  ", color=:blue)
         println(io, "[", join(get_state_names(route), ", "), "]")
         
-        # Print outputs with a different color
         print(io, "│ ")
         printstyled(io, "Outputs: ", color=:light_yellow)
         println(io, "[", join(get_output_names(route), ", "), "]")
         
-        # Print parameters with a different color
         print(io, "│ ")
         printstyled(io, "Params:  ", color=:light_magenta)
         println(io, "[", join(get_param_names(route), ", "), "]")
         
-        # Print neural networks with a different color
-        print(io, "│ ")
+        print(io, "└─")
         printstyled(io, "NNs:     ", color=:light_cyan)
         println(io, "[", join(get_nn_names(route), ", "), "]")
-
-        # Print fluxes expressions
-        println(io, "│")
-        print(io, "│ ")
-        printstyled(io, "Fluxes:", color=:yellow)
-        println(io)
-        for flux in route.fluxes
-            for (output, ex) in zip(get_outputs(flux), get_exprs(flux))
-                print(io, "│   ")
-                println(io, output ~ ex)
-            end
-        end
-
-        println(io, "│")
-        print(io, "│ ")
-        printstyled(io, "State Fluxes:", color=:yellow)
-        println(io)
-        for dflux in route.dfluxes
-            for (st, ex) in zip(get_states(dflux), get_exprs(dflux))
-                print(io, "│   ")
-                println(io, st ~ ex)
-            end
-        end
-        
-        printstyled(io, "└─", color=:light_blue)
-        println(io)
     end
 end
 
+"""
+$(SIGNATURES)
+
+Custom pretty-printing for `AbstractModel`.
+"""
 function Base.show(io::IO, model::AbstractModel)
     fluxes_in_model = filter(x -> x isa AbstractFlux, model.components)
     buckets_in_model = filter(x -> x isa AbstractBucket, model.components)
@@ -324,19 +296,19 @@ function Base.show(io::IO, model::AbstractModel)
     compact = get(io, :compact, false)
     if compact
         print(io, "HydroModel(")
-        print(io, "name: ", get_name(model))
+        print(io, "name: ", model.name)
         print(io, ", components: ", length(model.components))
         print(io, ")")
     else
         printstyled(io, "┌ ", color=:light_blue, bold=true)
         printstyled(io, "HydroModel: ", color=:light_blue, bold=true)
-        printstyled(io, get_name(model), color=:white, bold=true)
+        printstyled(io, model.name, color=:white, bold=true)
         println(io)
         
         # Print components with a different color
         print(io, "│ ")
         printstyled(io, "Components: ", color=:cyan)
-        println(io, join(map(c -> get_name(c), model.components), ", "))
+        println(io, join(map(c -> c.name, model.components), ", "))
         
         # Print inputs with a different color
         print(io, "│ ")
@@ -378,10 +350,10 @@ function Base.show(io::IO, model::AbstractModel)
         printstyled(io, "Routes:  ", color=:light_cyan)
         println(io, length(routes_in_model), " route", length(routes_in_model) == 1 ? "" : "s")
 
-        # Print routes count
+        # Print uh count
         print(io, "│   ")
         printstyled(io, "UnitHydrographs:  ", color=:light_cyan)
-        println(io, length(uh_in_model), " route", length(uh_in_model) == 1 ? "" : "s")
+        println(io, length(uh_in_model), " uh", length(uh_in_model) == 1 ? "" : "s")
         
         printstyled(io, "└─", color=:light_blue)
         println(io)

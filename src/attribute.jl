@@ -1,104 +1,107 @@
+using DocStringExtensions
 
 """
-    get(cpt::AbstractComponent)::Num
+    $(TYPEDEF)
 
-Get the name of a component from its type parameters.
-"""
-get_name(cpt::AbstractComponent)::Symbol = typeof(cpt).parameters[1]
+Stores attribute information for a hydrological component.
 
+# Fields
+$(FIELDS)
 """
-    get_inputs(cpt::AbstractComponent)::AbstractVector{Num}
+struct HydroInfos{IS,OS,SS,PS,NS}
+    "Input variable names."
+    inputs::IS
+    "Output variable names."
+    outputs::OS
+    "State variable names."
+    states::SS
+    "Parameter names."
+    params::PS
+    "Neural network names."
+    nns::NS
 
-Get input variable names from component metadata.
-"""
-get_inputs(cpt::AbstractComponent)::AbstractVector{Num} = haskey(cpt.infos, :inputs) ? cpt.infos.inputs : Num[]
-get_input_names(cpt::AbstractComponent) = length(get_inputs(cpt)) == 0 ? Symbol[] : tosymbol.(get_inputs(cpt))
-
-"""
-    get_outputs(cpt::AbstractComponent)::AbstractVector{Num}
-
-Get output variable names from component metadata.
-"""
-get_outputs(cpt::AbstractComponent)::AbstractVector{Num} = haskey(cpt.infos, :outputs) ? cpt.infos.outputs : Num[]
-get_output_names(cpt::AbstractComponent) = length(get_outputs(cpt)) == 0 ? Symbol[] : tosymbol.(get_outputs(cpt))
-
-"""
-    get_states(cpt::AbstractComponent)::AbstractVector{Num}
-
-Get state variable names from component metadata.
-"""
-get_states(cpt::AbstractComponent)::AbstractVector{Num} = haskey(cpt.infos, :states) ? cpt.infos.states : Num[]
-get_state_names(cpt::AbstractComponent) = length(get_states(cpt)) == 0 ? Symbol[] : tosymbol.(get_states(cpt))
-
-"""
-    get_params(cpt::AbstractComponent)::AbstractVector{Num}
-
-Get parameter names from component metadata.
-"""
-get_params(cpt::AbstractComponent)::AbstractVector{Num} = haskey(cpt.infos, :params) ? cpt.infos.params : Num[]
-get_param_names(cpt::AbstractComponent) = length(get_params(cpt)) == 0 ? Symbol[] : tosymbol.(get_params(cpt))
-
-"""
-    get_nns(cpt::AbstractComponent)::AbstractVector{Num}
-
-Get neural network names from component metadata.
-"""
-get_nns(cpt::AbstractComponent) = haskey(cpt.infos, :nns) ? cpt.infos.nns : Num[]
-get_nn_names(cpt::AbstractComponent) = length(get_nns(cpt)) == 0 ? Symbol[] : tosymbol.(unwrap.(get_nns(cpt)))
-
-"""
-    get_exprs(cpt::AbstractComponent)
-
-Get expressions defined in component.
-"""
-get_exprs(cpt::AbstractFlux) = cpt.exprs
-get_exprs(cpt::AbstractNeuralFlux) = get_outputs(cpt) ~ cpt.chain(get_inputs(cpt))
-
-"""
-    get_vars(comps::AbstractComponent)
-
-Get all variable names (inputs, outputs, states) from a component.
-Returns (inputs, outputs, states).
-"""
-get_vars(comps::AbstractComponent) = get_inputs(comps), get_outputs(comps), get_states(comps)
-get_var_names(comps::AbstractComponent) = get_input_names(comps), get_output_names(comps), get_state_names(comps)
-
-"""
-    get_var_names(funcs::Vector{<:AbstractFlux}, dfuncs::Vector{<:AbstractStateFlux})
-
-Get all variable names from flux and state flux functions.
-Returns (input_names, output_names, state_names).
-"""
-function get_vars(funcs::Vector{<:AbstractFlux}, dfuncs::Vector{<:AbstractStateFlux})
-    inputs = Vector{Num}()
-    outputs = Vector{Num}()
-    states = length(dfuncs) == 0 ? Num[] : reduce(union, get_states.(dfuncs))
-    for func in vcat(funcs, dfuncs)
-        tmp_inputs = setdiff(setdiff(get_inputs(func), outputs), states)
-        tmp_outputs = setdiff(get_outputs(func), inputs)
-        union!(inputs, tmp_inputs)
-        union!(outputs, tmp_outputs)
+    function HydroInfos(;
+        inputs::AbstractVector{Symbol}=Symbol[],
+        outputs::AbstractVector{Symbol}=Symbol[],
+        states::AbstractVector{Symbol}=Symbol[],
+        params::AbstractVector{Symbol}=Symbol[],
+        nns::AbstractVector{Symbol}=Symbol[]
+    )
+        new{typeof(inputs),typeof(outputs),typeof(states),typeof(params),typeof(nns)}(
+            inputs, outputs, states, params, nns
+        )
     end
-    inputs, outputs, states
 end
 
 """
-    get_vars(components::Vector{<:AbstractComponent})
+    get_input_names(x)
 
-Get all variable names from components, handling dependencies.
-Returns (input_names, output_names, state_names).
+Get input names from `HydroInfos` or `AbstractComponent`.
 """
-function get_vars(components::Vector{<:AbstractComponent})
-    inputs = Vector{Num}()
-    outputs = Vector{Num}()
-    states = length(components) == 0 ? Num[] : reduce(union, get_states.(components))
+@inline get_input_names(infos::HydroInfos) = infos.inputs
+@inline get_input_names(cpt::AbstractComponent) = get_input_names(cpt.infos)
+
+"""
+    get_output_names(x)
+
+Get output names from `HydroInfos` or `AbstractComponent`.
+"""
+@inline get_output_names(infos::HydroInfos) = infos.outputs
+@inline get_output_names(cpt::AbstractComponent) = get_output_names(cpt.infos)
+
+"""
+    get_state_names(x)
+
+Get state names from `HydroInfos` or `AbstractComponent`.
+"""
+@inline get_state_names(infos::HydroInfos) = infos.states
+@inline get_state_names(cpt::AbstractComponent) = get_state_names(cpt.infos)
+
+"""
+    get_param_names(x)
+
+Get parameter names from `HydroInfos` or `AbstractComponent`.
+"""
+@inline get_param_names(infos::HydroInfos) = infos.params
+@inline get_param_names(cpt::AbstractComponent) = get_param_names(cpt.infos)
+
+"""
+    get_nn_names(x)
+
+Get neural network names from `HydroInfos` or `AbstractComponent`.
+"""
+@inline get_nn_names(infos::HydroInfos) = infos.nns
+@inline get_nn_names(cpt::AbstractComponent) = get_nn_names(cpt.infos)
+
+"""
+    get_var_names(x)
+
+Get input, output, and state names from `HydroInfos` or `AbstractComponent`.
+"""
+@inline get_var_names(infos::HydroInfos) = get_input_names(infos), get_output_names(infos), get_state_names(infos)
+@inline get_var_names(cpt::AbstractComponent) = get_var_names(cpt.infos)
+
+"""
+    get_exprs(cpt)
+
+Get expressions from a flux component.
+"""
+get_exprs(cpt::AbstractFlux) = cpt.exprs
+get_exprs(cpt::AbstractNeuralFlux) = get_outputs(cpt) ~ cpt.chain
+
+"""
+    get_var_names(components)
+
+Get unique variable names from a collection of components.
+"""
+function get_var_names(components::CT) where CT
+    inputs, outputs = Vector{Symbol}(), Vector{Symbol}()
+    states = reduce(union, get_state_names.(components))
     for comp in components
-        tmp_inputs, tmp_outputs, tmp_states = get_vars(comp)
+        tmp_inputs, tmp_outputs = get_input_names(comp), get_output_names(comp)
         tmp_inputs = setdiff(tmp_inputs, outputs)
-        tmp_inputs = setdiff(tmp_inputs, states)
         union!(inputs, tmp_inputs)
         union!(outputs, tmp_outputs)
-        union!(states, tmp_states)
     end
-    inputs, outputs, states
+    setdiff(inputs, states), outputs, states
 end

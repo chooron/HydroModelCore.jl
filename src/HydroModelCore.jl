@@ -1,9 +1,11 @@
 module HydroModelCore
 
-using ModelingToolkit: Num
-using Symbolics: tosymbol, unwrap
+using DocStringExtensions
+using Symbolics
+using Symbolics: tosymbol, unwrap, wrap, Num, Symbolic, @variables, get_variables
 
 abstract type AbstractComponent end
+abstract type AbstractNetwork end
 
 abstract type AbstractFlux <: AbstractComponent end
 abstract type AbstractHydroFlux <: AbstractFlux end
@@ -12,20 +14,31 @@ abstract type AbstractStateFlux <: AbstractFlux end
 
 abstract type AbstractElement <: AbstractComponent end
 abstract type AbstractBucket <: AbstractElement end
+abstract type AbstractHydroBucket <: AbstractBucket end
+abstract type AbstractNeuralBucket <: AbstractBucket end
 abstract type AbstractHydrograph <: AbstractElement end
 abstract type AbstractRoute <: AbstractElement end
 abstract type AbstractHydroRoute <: AbstractRoute end
 abstract type AbstractModel <: AbstractComponent end
 
 
+export AbstractComponent, # base type
+    AbstractHydroFlux, AbstractNeuralFlux, AbstractStateFlux, # flux types
+    AbstractElement, # element types
+    AbstractHydroBucket, AbstractNeuralBucket, # bucket types
+    AbstractHydrograph, # hydrograph types
+    AbstractRoute, AbstractHydroRoute, # route types
+    AbstractModel, # model types
+    AbstractNetwork # network types
+
 include("attribute.jl")
+include("check.jl")
 include("display.jl")
+include("parameters.jl")
+include("variables.jl")
 
-export AbstractComponent, AbstractHydroFlux, AbstractNeuralFlux, AbstractStateFlux,
-    AbstractElement, AbstractBucket, AbstractHydrograph,
-    AbstractRoute, AbstractHydroRoute, AbstractModel
-
-export get_name, get_input_names, get_output_names, get_param_names, get_state_names, get_nn_names
-export get_exprs, get_inputs, get_outputs, get_params, get_nns, get_vars
+export get_input_names, get_output_names, get_param_names, get_state_names, get_nn_names, get_exprs
+export @variables, @parameters
+export getdescription, getbounds, getunit, getguess
 
 end # module HydroModelCore
