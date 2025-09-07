@@ -24,9 +24,9 @@ abstract type AbstractModel <: AbstractComponent end
 
 
 export AbstractComponent, # base type
-    AbstractHydroFlux, AbstractNeuralFlux, AbstractStateFlux, # flux types
+    AbstractFlux, AbstractHydroFlux, AbstractNeuralFlux, AbstractStateFlux, # flux types
     AbstractElement, # element types
-    AbstractHydroBucket, AbstractNeuralBucket, # bucket types
+    AbstractBucket, AbstractHydroBucket, AbstractNeuralBucket, # bucket types
     AbstractHydrograph, # hydrograph types
     AbstractRoute, AbstractHydroRoute, # route types
     AbstractModel, # model types
@@ -38,8 +38,9 @@ include("display.jl")
 include("parameters.jl")
 include("variables.jl")
 
-export get_input_names, get_output_names, get_param_names, get_state_names, get_nn_names, get_exprs
-export @variables, @parameters
+export HydroInfos
+export get_input_names, get_output_names, get_param_names, get_state_names, get_nn_names, get_exprs, get_var_names
+export @variables, @parameters, isparameter
 export getdescription, getbounds, getunit, getguess
 
 end # module HydroModelCore

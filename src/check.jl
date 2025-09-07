@@ -1,5 +1,3 @@
-using DocStringExtensions
-
 """    
     check(; component, input, pas, initstates, timeidx)
 
