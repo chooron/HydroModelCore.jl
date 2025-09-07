@@ -4,10 +4,12 @@ authors = ["jingx <50790703+chooron@users.noreply.github.com>"]
 version = "0.2.0"
 
 [deps]
+ComponentArrays = "b0b7db55-cfe3-40fc-9ded-d10e2dbeff66"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 
 [compat]
+ComponentArrays = "0.15.29"
 DocStringExtensions = "0.9"
 Symbolics = "6"
 julia = "1"

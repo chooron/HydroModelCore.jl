@@ -1,6 +1,7 @@
 module HydroModelCore
 
 using DocStringExtensions
+using ComponentArrays
 using Symbolics
 using Symbolics: tosymbol, unwrap, wrap, Num, Symbolic, @variables, get_variables
 
