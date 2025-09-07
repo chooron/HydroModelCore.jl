@@ -1,7 +1,7 @@
 name = "HydroModelCore"
 uuid = "57609f06-44cb-4626-8f6d-47ea844d0af1"
 authors = ["jingx <50790703+chooron@users.noreply.github.com>"]
-version = "0.2.1"
+version = "0.2.0"
 
 [deps]
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
