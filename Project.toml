@@ -9,7 +9,7 @@ DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
 
 [compat]
-ComponentArrays = "0.15.29"
+ComponentArrays = "0.15"
 DocStringExtensions = "0.9"
 Symbolics = "6"
 julia = "1"
