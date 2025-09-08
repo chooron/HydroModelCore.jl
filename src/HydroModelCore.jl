@@ -17,9 +17,9 @@ abstract type AbstractElement <: AbstractComponent end
 abstract type AbstractBucket <: AbstractElement end
 abstract type AbstractHydroBucket <: AbstractBucket end
 abstract type AbstractNeuralBucket <: AbstractBucket end
-abstract type AbstractHydrograph <: AbstractElement end
 abstract type AbstractRoute <: AbstractElement end
 abstract type AbstractHydroRoute <: AbstractRoute end
+abstract type AbstractHydrograph <: AbstractRoute end
 abstract type AbstractModel <: AbstractComponent end
 
 
@@ -27,8 +27,7 @@ export AbstractComponent, # base type
     AbstractFlux, AbstractHydroFlux, AbstractNeuralFlux, AbstractStateFlux, # flux types
     AbstractElement, # element types
     AbstractBucket, AbstractHydroBucket, AbstractNeuralBucket, # bucket types
-    AbstractHydrograph, # hydrograph types
-    AbstractRoute, AbstractHydroRoute, # route types
+    AbstractRoute, AbstractHydroRoute, AbstractHydrograph, # route types
     AbstractModel, # model types
     AbstractNetwork # network types
 
