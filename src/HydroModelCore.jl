@@ -10,7 +10,7 @@ abstract type AbstractNetwork end
 
 abstract type AbstractFlux <: AbstractComponent end
 abstract type AbstractHydroFlux <: AbstractFlux end
-abstract type AbstractNeuralFlux <: AbstractHydroFlux end
+abstract type AbstractNeuralFlux <: AbstractFlux end
 abstract type AbstractStateFlux <: AbstractFlux end
 
 abstract type AbstractElement <: AbstractComponent end
