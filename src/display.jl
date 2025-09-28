@@ -290,7 +290,6 @@ function Base.show(io::IO, model::AbstractModel)
     buckets_in_model = filter(x -> x isa AbstractBucket, model.components)
     routes_in_model = filter(x -> x isa AbstractRoute, model.components)
     uh_in_model = filter(x -> x isa AbstractHydrograph, model.components)
-    @assert(length(routes_in_model) <= 1, "Only one route is allowed in a model")
     compact = get(io, :compact, false)
     if compact
         print(io, "HydroModel(")
@@ -308,25 +307,25 @@ function Base.show(io::IO, model::AbstractModel)
         printstyled(io, "Components: ", color=:cyan)
         println(io, join(map(c -> c.name, model.components), ", "))
         
-        # Print inputs with a different color
         print(io, "│ ")
-        printstyled(io, "Inputs:     ", color=:light_green)
-        println(io, "[", join(get_input_names(model), ", "), "]")
+        printstyled(io, "Inputs:  ", color=:light_green)
+        println(io, "[", join(get_input_names(route), ", "), "]")
         
-        # Print states with a different color
         print(io, "│ ")
-        printstyled(io, "States:     ", color=:blue)
-        println(io, "[", join(get_state_names(model), ", "), "]")
+        printstyled(io, "States:  ", color=:blue)
+        println(io, "[", join(get_state_names(route), ", "), "]")
         
-        # Print outputs with a different color
         print(io, "│ ")
-        printstyled(io, "Outputs:    ", color=:light_yellow)
-        println(io, "[", join(get_output_names(model), ", "), "]")
+        printstyled(io, "Outputs: ", color=:light_yellow)
+        println(io, "[", join(get_output_names(route), ", "), "]")
         
-        # Print parameters with a different color
         print(io, "│ ")
-        printstyled(io, "Parameters: ", color=:light_magenta)
-        println(io, "[", join(get_param_names(model), ", "), "]")
+        printstyled(io, "Params:  ", color=:light_magenta)
+        println(io, "[", join(get_param_names(route), ", "), "]")
+        
+        print(io, "└─")
+        printstyled(io, "NNs:     ", color=:light_cyan)
+        println(io, "[", join(get_nn_names(route), ", "), "]")
         
         # Print component summary
         print(io, "│ ")

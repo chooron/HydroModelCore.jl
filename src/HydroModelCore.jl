@@ -3,10 +3,12 @@ module HydroModelCore
 using DocStringExtensions
 using ComponentArrays
 using Symbolics
-using Symbolics: tosymbol, unwrap, wrap, Num, Symbolic, @variables, get_variables
+using Symbolics: tosymbol, unwrap, wrap, Num, Symbolic, @variables, get_variables, symbolic_type, ArraySymbolic
 
 abstract type AbstractComponent end
 abstract type AbstractNetwork end
+abstract type AbstractConfig end
+abstract type AbstractInfos end
 
 abstract type AbstractFlux <: AbstractComponent end
 abstract type AbstractHydroFlux <: AbstractFlux end
@@ -23,7 +25,7 @@ abstract type AbstractHydrograph <: AbstractRoute end
 abstract type AbstractModel <: AbstractComponent end
 
 
-export AbstractComponent, # base type
+export AbstractComponent, AbstractConfig, AbstractInfos, # base type
     AbstractFlux, AbstractHydroFlux, AbstractNeuralFlux, AbstractStateFlux, # flux types
     AbstractElement, # element types
     AbstractBucket, AbstractHydroBucket, AbstractNeuralBucket, # bucket types

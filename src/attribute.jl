@@ -6,7 +6,7 @@ Stores attribute information for a hydrological component.
 # Fields
 $(FIELDS)
 """
-struct HydroInfos{IS,OS,SS,PS,NS}
+struct HydroInfos{IS,OS,SS,PS,NS} <: AbstractInfos
     "Input variable names."
     inputs::IS
     "Output variable names."
