@@ -1,3 +1,4 @@
 Manifest.toml
 .gitattributes
 .gitingore
+cache/

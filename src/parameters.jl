@@ -51,7 +51,7 @@ function toparam(s)
 end
 toparam(s::Num) = Symbolics.wrap(toparam(Symbolics.value(s)))
 
-tovar(s::Symbolic) = setmetadata(s, MTKVariableTypeCtx, VARIABLE)
+tovar(s::SymbolicUtils.BasicSymbolic) = setmetadata(s, MTKVariableTypeCtx, VARIABLE)
 tovar(s::Num) = Num(tovar(Symbolics.value(s)))
 
 macro parameters(xs...)

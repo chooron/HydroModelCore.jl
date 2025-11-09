@@ -179,7 +179,7 @@ struct Stream <: AbstractConnectType end   # special stream connector
 Get the connect type of x. See also [`hasconnect`](@ref).
 """
 getconnect(x::Num) = getconnect(unwrap(x))
-getconnect(x::Symbolic) = Symbolics.getmetadata(x, VariableConnectType, nothing)
+getconnect(x::SymbolicUtils.BasicSymbolic) = Symbolics.getmetadata(x, VariableConnectType, nothing)
 """
     hasconnect(x)
 
@@ -280,7 +280,7 @@ Create parameters with bounds like this
 @parameters p [bounds=(-1, 1)]
 ```
 """
-function getbounds(x::Union{Num, Symbolics.Arr, SymbolicUtils.Symbolic})
+function getbounds(x::Union{Num, Symbolics.Arr, SymbolicUtils.BasicSymbolic})
     x = unwrap(x)
     p = Symbolics.getparent(x, nothing)
     if p === nothing
@@ -512,7 +512,7 @@ end
 
 Maps the brownianiable to an unknown.
 """
-tobrownian(s::Symbolic) = setmetadata(s, MTKVariableTypeCtx, BROWNIAN)
+tobrownian(s::SymbolicUtils.BasicSymbolic) = setmetadata(s, MTKVariableTypeCtx, BROWNIAN)
 tobrownian(s::Num) = Num(tobrownian(value(s)))
 isbrownian(s) = getvariabletype(s) === BROWNIAN
 
@@ -587,7 +587,7 @@ Fetch any miscellaneous data associated with symbolic variable `x`.
 See also [`hasmisc(x)`](@ref).
 """
 getmisc(x::Num) = getmisc(unwrap(x))
-getmisc(x::Symbolic) = Symbolics.getmetadata(x, VariableMisc, nothing)
+getmisc(x::SymbolicUtils.BasicSymbolic) = Symbolics.getmetadata(x, VariableMisc, nothing)
 """
     hasmisc(x)
 
@@ -606,7 +606,7 @@ setmisc(x, miscdata) = setmetadata(x, VariableMisc, miscdata)
 Fetch the unit associated with variable `x`. This function is a metadata getter for an individual variable, while `get_unit` is used for unit inference on more complicated sdymbolic expressions.
 """
 getunit(x::Num) = getunit(unwrap(x))
-getunit(x::Symbolic) = Symbolics.getmetadata(x, VariableUnit, nothing)
+getunit(x::SymbolicUtils.BasicSymbolic) = Symbolics.getmetadata(x, VariableUnit, nothing)
 """
     hasunit(x)
 
@@ -615,7 +615,7 @@ Check if the variable `x` has a unit.
 hasunit(x) = getunit(x) !== nothing
 
 getunshifted(x::Num) = getunshifted(unwrap(x))
-getunshifted(x::Symbolic) = Symbolics.getmetadata(x, VariableUnshifted, nothing)
+getunshifted(x::SymbolicUtils.BasicSymbolic) = Symbolics.getmetadata(x, VariableUnshifted, nothing)
 
 getshift(x::Num) = getshift(unwrap(x))
-getshift(x::Symbolic) = Symbolics.getmetadata(x, VariableShift, 0)
+getshift(x::SymbolicUtils.BasicSymbolic) = Symbolics.getmetadata(x, VariableShift, 0)
