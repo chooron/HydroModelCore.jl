@@ -8,12 +8,8 @@ function isparameter(x)
 
     if x isa Symbolic && (varT = getvariabletype(x, nothing)) !== nothing
         return varT === PARAMETER
-        #TODO: Delete this branch
-    elseif x isa Symbolic && Symbolics.getparent(x, false) !== false
-        p = Symbolics.getparent(x)
-        isparameter(p) ||
-            (hasmetadata(p, Symbolics.VariableSource) &&
-             getmetadata(p, Symbolics.VariableSource)[1] == :parameters)
+    elseif x isa Symbolic && hasmetadata(x, Symbolics.VariableSource)
+        getmetadata(x, Symbolics.VariableSource)[1] == :parameters
     elseif iscall(x) && operation(x) isa Symbolic
         varT === PARAMETER || isparameter(operation(x))
     elseif iscall(x) && operation(x) == (getindex)
@@ -55,10 +51,10 @@ tovar(s::SymbolicUtils.BasicSymbolic) = setmetadata(s, MTKVariableTypeCtx, VARIA
 tovar(s::Num) = Num(tovar(Symbolics.value(s)))
 
 macro parameters(xs...)
-    Symbolics._parse_vars(:parameters,
+    Symbolics.parse_vars(:parameters,
         Real,
         xs,
-        toparam) |> esc
+        toparam)
 end
 
 function find_types(array)

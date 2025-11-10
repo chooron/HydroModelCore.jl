@@ -2,3 +2,6 @@ Manifest.toml
 .gitattributes
 .gitingore
 cache/
+
+*.md
+!README.md

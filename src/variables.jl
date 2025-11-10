@@ -54,6 +54,16 @@ Symbolics.option_to_metadata_type(::Val{:misc}) = VariableMisc
 Symbolics.option_to_metadata_type(::Val{:unshifted}) = VariableUnshifted
 Symbolics.option_to_metadata_type(::Val{:shift}) = VariableShift
 
+# 辅助函数：替代 Symbolics.getparent，处理数组索引的情况
+function getparent(x, default=nothing)
+    # 如果 x 是一个 getindex 调用（即数组元素 x[i]），返回数组本身
+    if iscall(x) && operation(x) == getindex
+        return arguments(x)[1]
+    end
+    # 否则返回 default
+    return default
+end
+
 """
     dump_variable_metadata(var)
 
@@ -195,7 +205,8 @@ isvarkind(m, x::Union{Num, Symbolics.Arr}) = isvarkind(m, value(x))
 function isvarkind(m, x)
     iskind = getmetadata(x, m, nothing)
     iskind !== nothing && return iskind
-    x = getparent(x, x)
+    p = getparent(x, nothing)
+    p !== nothing && (x = p)
     getmetadata(x, m, false)
 end
 
@@ -282,7 +293,7 @@ Create parameters with bounds like this
 """
 function getbounds(x::Union{Num, Symbolics.Arr, SymbolicUtils.BasicSymbolic})
     x = unwrap(x)
-    p = Symbolics.getparent(x, nothing)
+    p = getparent(x, nothing)
     if p === nothing
         bounds = Symbolics.getmetadata(x, VariableBounds, (-Inf, Inf))
         if symbolic_type(x) == ArraySymbolic() && Symbolics.shape(x) != Symbolics.Unknown()
@@ -339,7 +350,7 @@ isdisturbance(x::Num) = isdisturbance(Symbolics.unwrap(x))
 Determine whether symbolic variable `x` is marked as a disturbance input.
 """
 function isdisturbance(x)
-    p = Symbolics.getparent(x, nothing)
+    p = getparent(x, nothing)
     p === nothing || (x = p)
     Symbolics.getmetadata(x, VariableDisturbance, false)
 end
@@ -372,7 +383,7 @@ Create a tunable parameter by
 See also [`tunable_parameters`](@ref), [`getbounds`](@ref)
 """
 function istunable(x, default = true)
-    p = Symbolics.getparent(x, nothing)
+    p = getparent(x, nothing)
     p === nothing || (x = p)
     Symbolics.getmetadata(x, VariableTunable, default)
 end
@@ -398,7 +409,7 @@ getdist(u) # retrieve distribution
 ```
 """
 function getdist(x)
-    p = Symbolics.getparent(x, nothing)
+    p = getparent(x, nothing)
     p === nothing || (x = p)
     Symbolics.getmetadata(x, VariableDistribution, nothing)
 end
@@ -492,7 +503,7 @@ getdescription(x::Symbolics.Arr) = getdescription(Symbolics.unwrap(x))
 Return any description attached to variables `x`. If no description is attached, an empty string is returned.
 """
 function getdescription(x)
-    p = Symbolics.getparent(x, nothing)
+    p = getparent(x, nothing)
     p === nothing || (x = p)
     Symbolics.getmetadata(x, VariableDescription, "")
 end
