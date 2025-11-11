@@ -138,18 +138,26 @@ end
 """
 $(SIGNATURES)
 
-Generate array indexing expression based on dimension.
+Generate array indexing expression for variable extraction.
 
 # Examples
 ```julia
-index_expr(1, Dim0())  # => 1
-index_expr(1, Dim1())  # => (1, :)
-index_expr(1, Dim2())  # => (1, :, :)
+make_index_expr(:inputs, 1, Dim0())  # => :(inputs[1])
+make_index_expr(:inputs, 1, Dim1())  # => :(inputs[1, :])
+make_index_expr(:inputs, 1, Dim2())  # => :(inputs[1, :, :])
 ```
 """
-@inline index_expr(idx::Int, ::Dim0) = idx
-@inline index_expr(idx::Int, ::Dim1) = :($idx, :)
-@inline index_expr(idx::Int, ::Dim2) = :($idx, :, :)
+@inline function make_index_expr(target::Symbol, idx::Int, ::Dim0)
+    return :($(target)[$idx])
+end
+
+@inline function make_index_expr(target::Symbol, idx::Int, ::Dim1)
+    return :($(target)[$idx, :])
+end
+
+@inline function make_index_expr(target::Symbol, idx::Int, ::Dim2)
+    return :($(target)[$idx, :, :])
+end
 
 #==============================================================================
 # Variable Assignment Generation
@@ -186,14 +194,14 @@ generate_var_assignments([:temp, :prcp], :inputs, Dim1())
 )
     assignments = map(enumerate(vars)) do (idx, var)
         var_name = Symbol(prefix, var)
-        index = index_expr(idx, dim_config)
+        index_expr = make_index_expr(target, idx, dim_config)
         
         # Fast mode: use @inbounds (breaks Zygote)
         # Safe/AutoDiff mode: normal indexing (Zygote-safe)
         if config.mode == Fast
-            :(@inbounds $(var_name) = $(target)[$(index)])
+            :(@inbounds $(var_name) = $(index_expr))
         else
-            :($(var_name) = $(target)[$(index)])
+            :($(var_name) = $(index_expr))
         end
     end
     
@@ -333,7 +341,7 @@ Zygote-safe in all modes.
         :($(nn_output) = $(flux.chain_func)($(nn_input), $(nn_name))),
         # Extract outputs
         [
-            :($(nm) = $(nn_output)[$(index_expr(i, dim_config))])
+            :($(nm) = $(make_index_expr(nn_output, i, dim_config)))
             for (i, nm) in enumerate(output_names)
         ]...
     ]
@@ -542,7 +550,7 @@ function build_flux_func(
             generate_param_assignments(infos.params)
         ),
         [:($(o) = $(expr)) for (o, expr) in zip(infos.outputs, flux_exprs)],
-        :(return [$((infos.outputs)...)])
+        :(return [$(infos.outputs...)])
     )
     
     return build_runtime_function(config; build_config=build_config)
@@ -590,7 +598,7 @@ function build_bucket_func(
         :((inputs, states, pas)),
         generate_all_assignments(infos, nn_fluxes, flux_dim, build_config),
         generate_compute_calls(fluxes, flux_dim),
-        :(return [$((infos.outputs)...)])
+        :(return [$(infos.outputs...)])
     )
     
     # Build diff function configuration

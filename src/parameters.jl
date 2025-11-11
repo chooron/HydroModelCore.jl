@@ -6,15 +6,15 @@ getvariabletype(x, def = VARIABLE) = getmetadata(unwrap(x), MTKVariableTypeCtx, 
 function isparameter(x)
     x = unwrap(x)
 
-    if x isa Symbolic && (varT = getvariabletype(x, nothing)) !== nothing
+    if x isa SymbolicUtils.BasicSymbolic && (varT = getvariabletype(x, nothing)) !== nothing
         return varT === PARAMETER
-    elseif x isa Symbolic && hasmetadata(x, Symbolics.VariableSource)
+    elseif x isa SymbolicUtils.BasicSymbolic && hasmetadata(x, Symbolics.VariableSource)
         getmetadata(x, Symbolics.VariableSource)[1] == :parameters
-    elseif iscall(x) && operation(x) isa Symbolic
+    elseif iscall(x) && operation(x) isa SymbolicUtils.BasicSymbolic
         varT === PARAMETER || isparameter(operation(x))
     elseif iscall(x) && operation(x) == (getindex)
         isparameter(arguments(x)[1])
-    elseif x isa Symbolic
+    elseif x isa SymbolicUtils.BasicSymbolic
         varT === PARAMETER
     else
         false

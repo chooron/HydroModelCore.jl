@@ -6,3 +6,5 @@ using HydroModelCore
 @info getdescription(p)
 @info getguess(p)
 @info getunit(p)
+
+isparameter(p)
