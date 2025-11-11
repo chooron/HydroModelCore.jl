@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Julia Version](https://img.shields.io/badge/julia-v1.0%2B-blue)](https://julialang.org/)
-[![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](Project.toml)
+[![version](https://docs.juliahub.com/HydroModelCore/version.svg)](https://juliahub.com/ui/Packages/General/HydroModelCore)
 
 > The foundational framework for building modular hydrological models in Julia
 
