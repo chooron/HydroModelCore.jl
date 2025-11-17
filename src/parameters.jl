@@ -50,11 +50,21 @@ toparam(s::Num) = Symbolics.wrap(toparam(Symbolics.value(s)))
 tovar(s::SymbolicUtils.BasicSymbolic) = setmetadata(s, MTKVariableTypeCtx, VARIABLE)
 tovar(s::Num) = Num(tovar(Symbolics.value(s)))
 
-macro parameters(xs...)
-    Symbolics.parse_vars(:parameters,
+
+if pkgversion(Symbolics) >= v"7.0.0"
+    macro parameters(xs...)
+        Symbolics.parse_vars(:parameters,
+            Real,
+            xs,
+            toparam)
+    end
+else
+    macro parameters(xs...)
+        Symbolics._parse_vars(:parameters,
         Real,
         xs,
-        toparam)
+        toparam) |> esc
+    end
 end
 
 function find_types(array)
