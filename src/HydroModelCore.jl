@@ -104,6 +104,7 @@ export print_variable_details   # Print detailed variable information
 # Variable system (variables.jl)
 # ================================================================================================
 export @variables, @parameters, isparameter
+export tosymbol, Num, get_variables
 export getdescription, getbounds, getunit, getguess
 
 # ================================================================================================

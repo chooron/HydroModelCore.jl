@@ -1,6 +1,6 @@
 name = "HydroModelCore"
 uuid = "57609f06-44cb-4626-8f6d-47ea844d0af1"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["jingx <50790703+chooron@users.noreply.github.com>"]
 
 [deps]

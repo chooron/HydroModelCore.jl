@@ -51,7 +51,7 @@ tovar(s::SymbolicUtils.BasicSymbolic) = setmetadata(s, MTKVariableTypeCtx, VARIA
 tovar(s::Num) = Num(tovar(Symbolics.value(s)))
 
 
-if pkgversion(Symbolics) >= v"7.0.0"
+@static if pkgversion(Symbolics) >= v"7.0.0"
     macro parameters(xs...)
         Symbolics.parse_vars(:parameters,
             Real,
